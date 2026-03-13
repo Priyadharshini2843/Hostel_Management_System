@@ -28,4 +28,12 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+const employee = (req, res, next) => {
+  if (req.user && (req.user.role === 'employee' || req.user.role === 'admin')) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Not authorized as an employee' });
+  }
+};
+
+module.exports = { protect, admin, employee };

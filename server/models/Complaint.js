@@ -24,6 +24,28 @@ const complaintSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  assignedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  repairNotes: {
+    type: String,
+  },
+  completionTime: {
+    type: Date,
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
+  },
+  feedback: {
+    type: String,
+  },
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt
 });

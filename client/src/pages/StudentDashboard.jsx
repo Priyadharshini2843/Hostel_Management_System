@@ -9,6 +9,8 @@ const StudentDashboard = () => {
   const [complaints, setComplaints] = useState([]);
   const [formData, setFormData] = useState({ title: '', description: '', priority: 'Low' });
   const [loading, setLoading] = useState(true);
+  const [feedbackData, setFeedbackData] = useState({ rating: 5, feedback: '' });
+  const [feedbackComplaintId, setFeedbackComplaintId] = useState(null);
 
   const fetchComplaints = async () => {
     try {
@@ -34,6 +36,19 @@ const StudentDashboard = () => {
       fetchComplaints(); // Refresh list
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to submit complaint');
+    }
+  };
+
+  const handleFeedbackSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post(`/complaints/${feedbackComplaintId}/feedback`, feedbackData);
+      toast.success('Feedback submitted successfully');
+      setFeedbackComplaintId(null);
+      setFeedbackData({ rating: 5, feedback: '' });
+      fetchComplaints();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit feedback');
     }
   };
 
@@ -167,9 +182,10 @@ const StudentDashboard = () => {
                     <thead>
                       <tr className="bg-gray-50 text-text-muted text-sm border-b border-gray-200">
                         <th className="px-6 py-4 font-medium">Issue</th>
-                        <th className="px-6 py-4 font-medium">Status</th>
-                        <th className="px-6 py-4 font-medium">Priority</th>
+                        <th className="px-6 py-4 font-medium">Assigned To</th>
+                        <th className="px-6 py-4 font-medium">Status & Notes</th>
                         <th className="px-6 py-4 font-medium">Date</th>
+                        <th className="px-6 py-4 font-medium text-center">Feedback</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -178,19 +194,37 @@ const StudentDashboard = () => {
                           <td className="px-6 py-4">
                             <div className="font-medium text-text-main">{c.title}</div>
                             <div className="text-sm text-text-muted mt-1 max-w-xs truncate">{c.description}</div>
+                            <span className={`mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${getPriorityColor(c.priority)}`}>
+                              {c.priority} Priority
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-sm">
+                            {c.assignedTo?.name || <span className="text-gray-400 italic">Unassigned</span>}
                           </td>
                           <td className="px-6 py-4">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(c.status)}`}>
                               {c.status}
                             </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(c.priority)}`}>
-                              {c.priority}
-                            </span>
+                            {c.repairNotes && <div className="text-xs text-text-muted mt-1 max-w-[150px] truncate" title={c.repairNotes}>Notes: {c.repairNotes}</div>}
                           </td>
                           <td className="px-6 py-4 text-sm text-text-muted">
                             {new Date(c.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            {c.status === 'Resolved' && !c.rating ? (
+                              <button
+                                onClick={() => setFeedbackComplaintId(c._id)}
+                                className="text-primary hover:text-primary-hover text-sm font-medium transition-colors border border-primary text-primary px-3 py-1 rounded-md"
+                              >
+                                Rate
+                              </button>
+                            ) : c.rating ? (
+                              <div className="flex items-center justify-center gap-1 text-amber-500 text-sm">
+                                {'★'.repeat(c.rating)}{'☆'.repeat(5 - c.rating)}
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 text-xs">-</span>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -202,6 +236,56 @@ const StudentDashboard = () => {
           </div>
         </div>
       </main>
+
+      {/* Feedback Modal */}
+      {feedbackComplaintId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Rate Resolution</h3>
+            <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Rating (1-5)</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setFeedbackData({...feedbackData, rating: star})}
+                      className={`text-2xl transition-colors focus:outline-none ${feedbackData.rating >= star ? 'text-amber-500' : 'text-gray-300 hover:text-amber-300'}`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Feedback Comments</label>
+                <textarea 
+                  className="w-full border-gray-300 rounded-lg shadow-sm focus:border-primary focus:ring-primary py-2 px-3 text-sm border min-h-[100px]"
+                  placeholder="How was the service? (Optional)"
+                  value={feedbackData.feedback}
+                  onChange={(e) => setFeedbackData({...feedbackData, feedback: e.target.value})}
+                />
+              </div>
+              <div className="pt-4 flex justify-end gap-3 border-t border-gray-100">
+                <button 
+                  type="button" 
+                  onClick={() => setFeedbackComplaintId(null)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-hover border border-transparent rounded-lg shadow-sm transition-colors"
+                >
+                  Submit Feedback
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

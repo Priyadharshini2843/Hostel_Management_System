@@ -7,31 +7,47 @@ import { LogOut, Filter, Trash2, Edit2, CheckCircle, Shield } from 'lucide-react
 const AdminDashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const [complaints, setComplaints] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('All');
 
-  const fetchComplaints = async () => {
+  const fetchData = async () => {
     try {
-      const { data } = await api.get('/complaints');
-      setComplaints(data);
+      const [complaintsRes, employeesRes] = await Promise.all([
+        api.get('/complaints'),
+        api.get('/auth/employees')
+      ]);
+      setComplaints(complaintsRes.data);
+      setEmployees(employeesRes.data);
     } catch (error) {
-      toast.error('Failed to load complaints');
+      toast.error('Failed to load data');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchComplaints();
+    fetchData();
   }, []);
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await api.put(`/complaints/${id}`, { status: newStatus });
+      await api.put(`/complaints/${id}/status`, { status: newStatus });
       toast.success(`Status updated to ${newStatus}`);
-      fetchComplaints();
+      fetchData();
     } catch (error) {
       toast.error('Failed to update status');
+    }
+  };
+
+  const handleAssignEmployee = async (complaintId, employeeId) => {
+    if (!employeeId) return;
+    try {
+      await api.put(`/complaints/${complaintId}/assign`, { employeeId });
+      toast.success('Employee assigned successfully');
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to assign employee');
     }
   };
 
@@ -40,7 +56,7 @@ const AdminDashboard = () => {
     try {
       await api.delete(`/complaints/${id}`);
       toast.success('Complaint deleted');
-      fetchComplaints();
+      fetchData();
     } catch (error) {
       toast.error('Failed to delete complaint');
     }
@@ -148,6 +164,7 @@ const AdminDashboard = () => {
                     <th className="px-6 py-4">Student Info</th>
                     <th className="px-6 py-4">Issue Details</th>
                     <th className="px-6 py-4 text-center">Priority</th>
+                    <th className="px-6 py-4">Assigned To</th>
                     <th className="px-6 py-4 text-center">Status</th>
                     <th className="px-6 py-4">Actions</th>
                   </tr>
@@ -170,6 +187,19 @@ const AdminDashboard = () => {
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(c.priority)}`}>
                           {c.priority}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm max-w-[150px]">
+                        <select
+                          className="w-full bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded focus:ring-primary focus:border-primary px-2 py-1 cursor-pointer"
+                          value={c.assignedTo?._id || ''}
+                          onChange={(e) => handleAssignEmployee(c._id, e.target.value)}
+                          disabled={c.status === 'Resolved'}
+                        >
+                          <option value="" disabled>Unassigned</option>
+                          {employees.map(emp => (
+                            <option key={emp._id} value={emp._id}>{emp.name}</option>
+                          ))}
+                        </select>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <select

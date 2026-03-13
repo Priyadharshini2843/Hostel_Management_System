@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import StudentDashboard from './pages/StudentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import EmployeeDashboard from './pages/EmployeeDashboard';
 
 function App() {
   return (
@@ -33,6 +34,15 @@ function App() {
               element={
                 <ProtectedRoute adminOnly={true}>
                   <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+              path="/employee" 
+              element={
+                <ProtectedRoute employeeOnly={true}>
+                  <EmployeeDashboard />
                 </ProtectedRoute>
               } 
             />

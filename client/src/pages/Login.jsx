@@ -13,6 +13,7 @@ const Login = () => {
   useEffect(() => {
     if (user) {
       if (user.role === 'admin') navigate('/admin');
+      else if (user.role === 'employee') navigate('/employee');
       else navigate('/dashboard');
     }
   }, [user, navigate]);
