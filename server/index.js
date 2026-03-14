@@ -8,8 +8,8 @@ dotenv.config();
 
 // Connect to MongoDB
 connectDB().then(async () => {
-  const seedAdmin = require('./config/seed');
-  await seedAdmin();
+  const seedDatabase = require('./config/seed');
+  await seedDatabase();
 });
 
 const app = express();

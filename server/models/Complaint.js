@@ -14,9 +14,14 @@ const complaintSchema = new mongoose.Schema({
     enum: ['Low', 'Medium', 'High'],
     default: 'Low',
   },
+  category: {
+    type: String,
+    enum: ['Electrical', 'Plumbing', 'Furniture', 'Other'],
+    default: 'Other',
+  },
   status: {
     type: String,
-    enum: ['Pending', 'Ongoing', 'Resolved'],
+    enum: ['Pending', 'Assigned', 'In Progress', 'Resolved', 'Closed'],
     default: 'Pending',
   },
   createdBy: {
@@ -31,6 +36,9 @@ const complaintSchema = new mongoose.Schema({
   assignedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+  },
+  assignedDate: {
+    type: Date,
   },
   repairNotes: {
     type: String,

@@ -8,7 +8,7 @@ const generateToken = (id) => {
 };
 
 const registerUser = async (req, res) => {
-  const { name, email, password, role, hostel, roomNumber } = req.body;
+  const { name, email, password, role, department, hostel, roomNumber } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -22,6 +22,7 @@ const registerUser = async (req, res) => {
       email,
       password,
       role: role || 'student',
+      department: role === 'employee' ? department : undefined,
       hostel,
       roomNumber,
     });

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
 
-const seedAdmin = async () => {
+const seedDatabase = async () => {
   try {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@hostel.com';
     const adminExists = await User.findOne({ email: adminEmail });
@@ -24,9 +24,26 @@ const seedAdmin = async () => {
     } else {
       console.log('Admin user already exists.');
     }
+
+    const employeesToSeed = [
+      { name: 'John', email: 'john@hostel.com', password: 'password123', role: 'employee', department: 'Electrical' },
+      { name: 'Ravi', email: 'ravi@hostel.com', password: 'password123', role: 'employee', department: 'Plumbing' },
+      { name: 'Kumar', email: 'kumar@hostel.com', password: 'password123', role: 'employee', department: 'Furniture' },
+      { name: 'Suresh', email: 'suresh@hostel.com', password: 'password123', role: 'employee', department: 'Electrical' }
+    ];
+
+    for (const emp of employeesToSeed) {
+      const empExists = await User.findOne({ email: emp.email });
+      if (!empExists) {
+        console.log(`Seeding employee: ${emp.name} (${emp.department})`);
+        const newEmp = new User(emp);
+        await newEmp.save();
+      }
+    }
+
   } catch (error) {
-    console.error('Error seeding admin user:', error.message);
+    console.error('Error seeding database:', error.message);
   }
 };
 
-module.exports = seedAdmin;
+module.exports = seedDatabase;

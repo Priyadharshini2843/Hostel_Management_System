@@ -30,13 +30,14 @@ const getComplaints = async (req, res) => {
 // @route   POST /api/complaints
 // @access  Private
 const createComplaint = async (req, res) => {
-  const { title, description, priority } = req.body;
+  const { title, description, priority, category } = req.body;
 
   try {
     const complaint = new Complaint({
       title,
       description,
       priority: priority || 'Low',
+      category: category || 'Other',
       createdBy: req.user._id,
     });
 
@@ -104,7 +105,8 @@ const assignComplaint = async (req, res) => {
     if (complaint) {
       complaint.assignedTo = employeeId;
       complaint.assignedBy = req.user._id;
-      complaint.status = 'Ongoing';
+      complaint.assignedDate = Date.now();
+      complaint.status = 'Assigned';
       const updatedComplaint = await complaint.save();
       res.json(updatedComplaint);
     } else {

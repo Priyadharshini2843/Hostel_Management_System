@@ -7,7 +7,7 @@ import { LogOut, User as UserIcon, AlertCircle, Clock, CheckCircle } from 'lucid
 const StudentDashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const [complaints, setComplaints] = useState([]);
-  const [formData, setFormData] = useState({ title: '', description: '', priority: 'Low' });
+  const [formData, setFormData] = useState({ title: '', description: '', priority: 'Low', category: 'Other' });
   const [loading, setLoading] = useState(true);
   const [feedbackData, setFeedbackData] = useState({ rating: 5, feedback: '' });
   const [feedbackComplaintId, setFeedbackComplaintId] = useState(null);
@@ -32,7 +32,7 @@ const StudentDashboard = () => {
     try {
       await api.post('/complaints', formData);
       toast.success('Complaint submitted successfully');
-      setFormData({ title: '', description: '', priority: 'Low' });
+      setFormData({ title: '', description: '', priority: 'Low', category: 'Other' });
       fetchComplaints(); // Refresh list
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to submit complaint');
@@ -55,8 +55,10 @@ const StudentDashboard = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pending': return 'text-amber-500 bg-amber-50';
-      case 'Ongoing': return 'text-blue-500 bg-blue-50';
+      case 'Assigned': return 'text-purple-500 bg-purple-50';
+      case 'In Progress': return 'text-blue-500 bg-blue-50';
       case 'Resolved': return 'text-emerald-500 bg-emerald-50';
+      case 'Closed': return 'text-gray-500 bg-gray-100 border border-gray-300';
       default: return 'text-gray-500 bg-gray-50';
     }
   };
@@ -141,16 +143,30 @@ const StudentDashboard = () => {
                     value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-text-main mb-1">Priority</label>
-                  <select 
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm bg-white"
-                    value={formData.priority} onChange={e => setFormData({...formData, priority: e.target.value})}
-                  >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-text-main mb-1">Category</label>
+                    <select 
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm bg-white"
+                      value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
+                    >
+                      <option value="Electrical">Electrical</option>
+                      <option value="Plumbing">Plumbing</option>
+                      <option value="Furniture">Furniture</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-text-main mb-1">Priority</label>
+                    <select 
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm bg-white"
+                      value={formData.priority} onChange={e => setFormData({...formData, priority: e.target.value})}
+                    >
+                      <option value="Low">Low</option>
+                      <option value="Medium">Medium</option>
+                      <option value="High">High</option>
+                    </select>
+                  </div>
                 </div>
                 <button 
                   type="submit" 
@@ -194,6 +210,9 @@ const StudentDashboard = () => {
                           <td className="px-6 py-4">
                             <div className="font-medium text-text-main">{c.title}</div>
                             <div className="text-sm text-text-muted mt-1 max-w-xs truncate">{c.description}</div>
+                            <span className={`mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium mr-2 bg-gray-100 text-gray-800`}>
+                              {c.category || 'Other'}
+                            </span>
                             <span className={`mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${getPriorityColor(c.priority)}`}>
                               {c.priority} Priority
                             </span>
@@ -202,7 +221,7 @@ const StudentDashboard = () => {
                             {c.assignedTo?.name || <span className="text-gray-400 italic">Unassigned</span>}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(c.status)}`}>
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.status === 'Closed' ? 'bg-gray-100 text-gray-500 border border-gray-300' : getStatusColor(c.status)}`}>
                               {c.status}
                             </span>
                             {c.repairNotes && <div className="text-xs text-text-muted mt-1 max-w-[150px] truncate" title={c.repairNotes}>Notes: {c.repairNotes}</div>}

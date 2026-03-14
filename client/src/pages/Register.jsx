@@ -9,6 +9,8 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
+    role: 'student',
+    department: 'Other',
     hostel: '',
     roomNumber: ''
   });
@@ -28,7 +30,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await register({ ...formData, role: 'student' });
+    const result = await register({ ...formData });
     if (result.success) {
       toast.success('Registration successful');
     } else {
@@ -68,6 +70,34 @@ const Register = () => {
               value={formData.email} onChange={handleChange}
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-text-main mb-1">Registration Type</label>
+            <select 
+              name="role"
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-white"
+              value={formData.role} onChange={handleChange}
+            >
+              <option value="student">Student</option>
+              <option value="employee">Maintenance Employee</option>
+            </select>
+          </div>
+          
+          {formData.role === 'employee' && (
+            <div>
+              <label className="block text-sm font-medium text-text-main mb-1">Department</label>
+              <select 
+                name="department"
+                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-white"
+                value={formData.department} onChange={handleChange}
+              >
+                <option value="Electrical">Electrical</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-text-main mb-1">Hostel</label>

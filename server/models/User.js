@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     enum: ['student', 'admin', 'employee'],
     default: 'student',
   },
+  department: {
+    type: String,
+    enum: ['Electrical', 'Plumbing', 'Furniture', 'Other'],
+  },
   hostel: {
     type: String,
   },

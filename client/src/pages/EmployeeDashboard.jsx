@@ -51,8 +51,10 @@ const EmployeeDashboard = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pending': return 'text-amber-500 bg-amber-50 border-amber-200';
-      case 'Ongoing': return 'text-blue-500 bg-blue-50 border-blue-200';
+      case 'Assigned': return 'text-purple-500 bg-purple-50 border-purple-200';
+      case 'In Progress': return 'text-blue-500 bg-blue-50 border-blue-200';
       case 'Resolved': return 'text-emerald-500 bg-emerald-50 border-emerald-200';
+      case 'Closed': return 'text-gray-500 bg-gray-100 border-gray-300';
       default: return 'text-gray-500 bg-gray-50 border-gray-200';
     }
   };
@@ -68,8 +70,8 @@ const EmployeeDashboard = () => {
 
   const stats = {
     total: complaints.length,
-    pending: complaints.filter(c => c.status === 'Pending').length,
-    ongoing: complaints.filter(c => c.status === 'Ongoing').length,
+    assigned: complaints.filter(c => c.status === 'Assigned').length,
+    inProgress: complaints.filter(c => c.status === 'In Progress').length,
     resolved: complaints.filter(c => c.status === 'Resolved').length,
   };
 
@@ -131,17 +133,17 @@ const EmployeeDashboard = () => {
             </div>
           </div>
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4">
-            <div className="p-3 bg-amber-50 text-amber-500 rounded-lg"><Clock size={24} /></div>
+            <div className="p-3 bg-purple-50 text-purple-500 rounded-lg"><Clock size={24} /></div>
             <div>
-              <p className="text-sm text-gray-500 font-medium">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+              <p className="text-sm text-gray-500 font-medium">Assigned</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.assigned}</p>
             </div>
           </div>
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4">
             <div className="p-3 bg-blue-50 text-blue-500 rounded-lg"><Wrench size={24} /></div>
             <div>
-              <p className="text-sm text-gray-500 font-medium">Ongoing</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.ongoing}</p>
+              <p className="text-sm text-gray-500 font-medium">In Progress</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.inProgress}</p>
             </div>
           </div>
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4">
@@ -168,6 +170,7 @@ const EmployeeDashboard = () => {
                   <tr className="bg-gray-50 text-text-muted border-b border-gray-200 uppercase tracking-wider text-xs font-semibold">
                     <th className="px-6 py-4">Task Details</th>
                     <th className="px-6 py-4">Location</th>
+                    <th className="px-6 py-4 text-center">Category</th>
                     <th className="px-6 py-4 text-center">Priority</th>
                     <th className="px-6 py-4 text-center">Status</th>
                     <th className="px-6 py-4">Notes</th>
@@ -182,12 +185,17 @@ const EmployeeDashboard = () => {
                         <div className="text-xs text-text-muted mt-1 max-w-[200px] truncate" title={c.description}>
                           {c.description}
                         </div>
-                        <div className="text-[10px] text-gray-400 mt-1">Assigned on: {new Date(c.updatedAt).toLocaleDateString()}</div>
+                        <div className="text-[10px] text-gray-400 mt-1">Assigned on: {c.assignedDate ? new Date(c.assignedDate).toLocaleDateString() : 'N/A'}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="font-medium text-text-main">{c.createdBy?.hostel || 'N/A'}</div>
                         <div className="text-xs text-text-muted mt-1">Room {c.createdBy?.roomNumber || 'N/A'}</div>
                         <div className="text-[10px] text-gray-400 mt-1">By {c.createdBy?.name || 'Unknown'}</div>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-gray-200 bg-gray-50 text-gray-700">
+                          {c.category || 'Other'}
+                        </span>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(c.priority)}`}>
@@ -203,7 +211,7 @@ const EmployeeDashboard = () => {
                         {c.repairNotes || 'No notes added yet'}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        {c.status !== 'Resolved' ? (
+                        {c.status !== 'Resolved' && c.status !== 'Closed' ? (
                           <button 
                             onClick={() => openEditModal(c)}
                             className="text-white bg-blue-500 hover:bg-blue-600 px-3 py-1.5 rounded-md text-xs font-medium transition-colors shadow-sm"
@@ -211,8 +219,8 @@ const EmployeeDashboard = () => {
                             Update
                           </button>
                         ) : (
-                          <span className="text-emerald-500 border border-emerald-200 bg-emerald-50 px-3 py-1.5 rounded-md text-xs font-medium inline-block">
-                            Completed
+                          <span className={`${c.status === 'Closed' ? 'text-gray-500 border-gray-300 bg-gray-100' : 'text-emerald-500 border-emerald-200 bg-emerald-50'} border px-3 py-1.5 rounded-md text-xs font-medium inline-block`}>
+                            {c.status}
                           </span>
                         )}
                       </td>
@@ -238,8 +246,8 @@ const EmployeeDashboard = () => {
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value)}
                 >
-                  <option value="Pending">Pending</option>
-                  <option value="Ongoing">Ongoing</option>
+                  <option value="Assigned">Assigned</option>
+                  <option value="In Progress">In Progress</option>
                   <option value="Resolved">Resolved</option>
                 </select>
               </div>

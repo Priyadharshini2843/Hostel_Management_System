@@ -69,10 +69,21 @@ const AdminDashboard = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pending': return 'text-amber-500 bg-amber-50';
-      case 'Ongoing': return 'text-blue-500 bg-blue-50';
+      case 'Assigned': return 'text-purple-500 bg-purple-50';
+      case 'In Progress': return 'text-blue-500 bg-blue-50';
       case 'Resolved': return 'text-emerald-500 bg-emerald-50';
+      case 'Closed': return 'text-gray-500 bg-gray-200 border border-gray-300';
       default: return 'text-gray-500 bg-gray-50';
     }
+  };
+
+  const stats = {
+    total: complaints.length,
+    pending: complaints.filter(c => c.status === 'Pending').length,
+    assigned: complaints.filter(c => c.status === 'Assigned').length,
+    inProgress: complaints.filter(c => c.status === 'In Progress').length,
+    resolved: complaints.filter(c => c.status === 'Resolved').length,
+    closed: complaints.filter(c => c.status === 'Closed').length,
   };
 
   const getPriorityColor = (priority) => {
@@ -129,14 +140,33 @@ const AdminDashboard = () => {
             <button onClick={logout} className="p-2 text-red-500"><LogOut size={20}/></button>
         </header>
         
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+            <p className="text-sm text-gray-500 font-medium">Total Tasks</p>
+            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+            <p className="text-sm text-amber-500 font-medium">Pending</p>
+            <p className="text-2xl font-bold text-amber-600">{stats.pending}</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+            <p className="text-sm text-purple-500 font-medium">Assigned</p>
+            <p className="text-2xl font-bold text-purple-600">{stats.assigned}</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+            <p className="text-sm text-blue-500 font-medium">In Progress</p>
+            <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
+          </div>
+        </div>
+        
         <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h2 className="text-3xl font-bold text-text-main">Complaints Overview</h2>
             <p className="text-text-muted mt-1">Manage and update student issues</p>
           </div>
           
-          <div className="flex items-center gap-2 bg-white p-1 rounded-lg shadow-sm border border-gray-200">
-            {['All', 'Pending', 'Ongoing', 'Resolved'].map((status) => (
+          <div className="flex items-center gap-2 bg-white p-1 rounded-lg shadow-sm border border-gray-200 text-xs overflow-x-auto">
+            {['All', 'Pending', 'Assigned', 'In Progress', 'Resolved', 'Closed'].map((status) => (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
@@ -163,6 +193,7 @@ const AdminDashboard = () => {
                   <tr className="bg-gray-50 text-text-muted border-b border-gray-200 uppercase tracking-wider text-xs font-semibold">
                     <th className="px-6 py-4">Student Info</th>
                     <th className="px-6 py-4">Issue Details</th>
+                    <th className="px-6 py-4 text-center">Category</th>
                     <th className="px-6 py-4 text-center">Priority</th>
                     <th className="px-6 py-4">Assigned To</th>
                     <th className="px-6 py-4 text-center">Status</th>
@@ -184,6 +215,11 @@ const AdminDashboard = () => {
                         <div className="text-[10px] text-gray-400 mt-1">{new Date(c.createdAt).toLocaleDateString()}</div>
                       </td>
                       <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                          {c.category || 'Other'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(c.priority)}`}>
                           {c.priority}
                         </span>
@@ -197,7 +233,7 @@ const AdminDashboard = () => {
                         >
                           <option value="" disabled>Unassigned</option>
                           {employees.map(emp => (
-                            <option key={emp._id} value={emp._id}>{emp.name}</option>
+                            <option key={emp._id} value={emp._id}>{emp.name} ({emp.department || 'Other'})</option>
                           ))}
                         </select>
                       </td>
@@ -208,8 +244,10 @@ const AdminDashboard = () => {
                           onChange={(e) => handleStatusChange(c._id, e.target.value)}
                         >
                           <option className="text-gray-800" value="Pending">Pending</option>
-                          <option className="text-gray-800" value="Ongoing">Ongoing</option>
+                          <option className="text-gray-800" value="Assigned">Assigned</option>
+                          <option className="text-gray-800" value="In Progress">In Progress</option>
                           <option className="text-gray-800" value="Resolved">Resolved</option>
+                          <option className="text-gray-800" value="Closed">Closed</option>
                         </select>
                       </td>
                       <td className="px-6 py-4">
