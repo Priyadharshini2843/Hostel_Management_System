@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // Replace with production URL later
+  baseURL: 'https://hostel-management-system-t8qs.onrender.com/api', // Replace with production URL later
   headers: {
     'Content-Type': 'application/json',
   },

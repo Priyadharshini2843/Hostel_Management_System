@@ -91,7 +91,7 @@ const EmployeeDashboard = () => {
               <Wrench size={24} />
             </div>
             <h3 className="font-semibold">{user?.name}</h3>
-            <p className="text-sm text-slate-400">Maintenance Staff</p>
+            <p className="text-sm text-slate-400">Maintainance Staff</p>
           </div>
           <nav className="space-y-2">
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-500/10 text-blue-400 font-medium transition-colors border border-blue-500/20">

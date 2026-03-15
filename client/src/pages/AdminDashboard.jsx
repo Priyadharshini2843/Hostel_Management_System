@@ -111,7 +111,7 @@ const AdminDashboard = () => {
               <span className="font-bold text-lg">{user?.name?.charAt(0)}</span>
             </div>
             <div>
-              <p className="font-medium text-sm">{user?.name}</p>
+              <p className="font-medium text-sm">Admin</p>
               <p className="text-xs text-gray-400">Warden</p>
             </div>
           </div>
