@@ -1,4 +1,5 @@
 const Complaint = require('../models/Complaint');
+const { sendComplaintResolvedEmail } = require('../utils/emailService');
 
 // @desc    Get all complaints (Admin) or User's complaints (Student)
 // @route   GET /api/complaints
@@ -58,6 +59,7 @@ const updateComplaintStatus = async (req, res) => {
     const complaint = await Complaint.findById(req.params.id);
 
     if (complaint) {
+      const wasResolved = complaint.status === 'Resolved';
       complaint.status = status;
       if (repairNotes) {
         complaint.repairNotes = repairNotes;
@@ -66,6 +68,19 @@ const updateComplaintStatus = async (req, res) => {
         complaint.completionTime = Date.now();
       }
       const updatedComplaint = await complaint.save();
+      if (status === 'Resolved' && !wasResolved) {
+        const complaintWithStudent = await updatedComplaint.populate('createdBy', 'name email');
+        try {
+          const emailResult = await sendComplaintResolvedEmail(complaintWithStudent);
+          if (emailResult.sent) {
+            console.log(`Resolution email sent to ${complaintWithStudent.createdBy.email}`);
+          } else {
+            console.warn(`Resolution email not sent: ${emailResult.reason}`);
+          }
+        } catch (emailError) {
+          console.error(`Failed to send resolution email: ${emailError.message}`);
+        }
+      }
       res.json(updatedComplaint);
     } else {
       res.status(404).json({ message: 'Complaint not found' });
