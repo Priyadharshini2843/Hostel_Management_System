@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
+import './App.css';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import StudentDashboard from './pages/StudentDashboard';
@@ -14,37 +15,37 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="font-sans antialiased text-gray-900 min-h-screen bg-gray-50">
+        <div className="app-container">
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            
-            <Route 
-              path="/dashboard" 
+
+            <Route
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <StudentDashboard />
                 </ProtectedRoute>
-              } 
+              }
             />
-            
-            <Route 
-              path="/admin" 
+
+            <Route
+              path="/admin"
               element={
                 <ProtectedRoute adminOnly={true}>
                   <AdminDashboard />
                 </ProtectedRoute>
-              } 
+              }
             />
 
-            <Route 
-              path="/employee" 
+            <Route
+              path="/employee"
               element={
                 <ProtectedRoute employeeOnly={true}>
                   <EmployeeDashboard />
                 </ProtectedRoute>
-              } 
+              }
             />
           </Routes>
         </div>

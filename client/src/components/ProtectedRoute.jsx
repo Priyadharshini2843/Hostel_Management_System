@@ -6,7 +6,11 @@ const ProtectedRoute = ({ children, adminOnly = false, employeeOnly = false }) =
   const { user, loading } = useContext(AuthContext);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="loading-page">
+        <div className="loading-card">Loading...</div>
+      </div>
+    );
   }
 
   if (!user) {

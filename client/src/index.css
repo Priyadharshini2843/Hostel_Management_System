@@ -1,19 +1,54 @@
-@import "tailwindcss";
-
-@theme {
-  --color-primary: #4F46E5;
-  --color-primary-hover: #4338CA;
-  --color-secondary: #10B981;
-  --color-background: #F3F4F6;
-  --color-card: #FFFFFF;
-  --color-text-main: #1F2937;
-  --color-text-muted: #6B7280;
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --secondary: #10b981;
+  --secondary-hover: #047857;
+  --background: #f3f4f6;
+  --card: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --danger: #ef4444;
 }
 
-@layer base {
-  body {
-    background-color: var(--color-background);
-    color: var(--color-text-main);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--background);
+  color: var(--text-main);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
 }

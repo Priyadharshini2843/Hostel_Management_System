@@ -1,0 +1,81 @@
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--background);
+}
+
+.register-card {
+  width: 100%;
+  max-width: 40rem;
+  background: var(--card);
+  border: 1px solid var(--gray-200);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+}
+
+.register-card__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.register-card__icon {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--secondary);
+}
+
+.register-card__title {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.register-card__subtitle {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.register-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.auth-footer-link {
+  color: var(--secondary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer-link:hover {
+  color: #047857;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

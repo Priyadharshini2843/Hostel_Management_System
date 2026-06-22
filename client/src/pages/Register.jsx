@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UserPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
+import './Register.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const Register = () => {
   useEffect(() => {
     if (user) {
       if (user.role === 'admin') navigate('/admin');
+      else if (user.role === 'employee') navigate('/employee');
       else navigate('/dashboard');
     }
   }, [user, navigate]);
@@ -41,54 +43,61 @@ const Register = () => {
   if (loading) return null;
 
   return (
-    <div className="min-h-screen py-12 flex items-center justify-center bg-background px-4">
-      <div className="max-w-md w-full bg-card rounded-2xl shadow-xl overflow-hidden p-8 border border-gray-100">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary/10 text-secondary mb-4">
+    <div className="register-page">
+      <div className="register-card">
+        <div className="register-card__header">
+          <div className="register-card__icon">
             <UserPlus size={32} />
           </div>
-          <h2 className="text-3xl font-bold text-text-main">Create Account</h2>
-          <p className="text-text-muted mt-2">Join the Hostel Management System</p>
+          <h2 className="register-card__title">Create Account</h2>
+          <p className="register-card__subtitle">Join the Hostel Management System</p>
         </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-text-main mb-1">Full Name</label>
-            <input 
-              type="text" name="name" required
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+
+        <form onSubmit={handleSubmit} className="register-form">
+          <div className="form-group">
+            <label className="form-label">Full Name</label>
+            <input
+              type="text"
+              name="name"
+              required
+              className="form-control"
               placeholder="John Doe"
-              value={formData.name} onChange={handleChange}
+              value={formData.name}
+              onChange={handleChange}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-text-main mb-1">Email Address</label>
-            <input 
-              type="email" name="email" required
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+          <div className="form-group">
+            <label className="form-label">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              required
+              className="form-control"
               placeholder="you@example.com"
-              value={formData.email} onChange={handleChange}
+              value={formData.email}
+              onChange={handleChange}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-text-main mb-1">Registration Type</label>
-            <select 
+          <div className="form-group">
+            <label className="form-label">Registration Type</label>
+            <select
               name="role"
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-white"
-              value={formData.role} onChange={handleChange}
+              className="form-select"
+              value={formData.role}
+              onChange={handleChange}
             >
               <option value="student">Student</option>
               <option value="employee">Maintenance Employee</option>
             </select>
           </div>
-          
           {formData.role === 'employee' && (
-            <div>
-              <label className="block text-sm font-medium text-text-main mb-1">Department</label>
-              <select 
+            <div className="form-group">
+              <label className="form-label">Department</label>
+              <select
                 name="department"
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-white"
-                value={formData.department} onChange={handleChange}
+                className="form-select"
+                value={formData.department}
+                onChange={handleChange}
               >
                 <option value="Electrical">Electrical</option>
                 <option value="Plumbing">Plumbing</option>
@@ -97,47 +106,52 @@ const Register = () => {
               </select>
             </div>
           )}
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-text-main mb-1">Hostel</label>
-              <input 
-                type="text" name="hostel" required
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Hostel</label>
+              <input
+                type="text"
+                name="hostel"
+                required
+                className="form-control"
                 placeholder="Block A"
-                value={formData.hostel} onChange={handleChange}
+                value={formData.hostel}
+                onChange={handleChange}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-text-main mb-1">Room No.</label>
-              <input 
-                type="text" name="roomNumber" required
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+            <div className="form-group">
+              <label className="form-label">Room No.</label>
+              <input
+                type="text"
+                name="roomNumber"
+                required
+                className="form-control"
                 placeholder="101"
-                value={formData.roomNumber} onChange={handleChange}
+                value={formData.roomNumber}
+                onChange={handleChange}
               />
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-text-main mb-1">Password</label>
-            <input 
-              type="password" name="password" required
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+          <div className="form-group">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              name="password"
+              required
+              className="form-control"
               placeholder="••••••••"
-              value={formData.password} onChange={handleChange}
+              value={formData.password}
+              onChange={handleChange}
             />
           </div>
-          <button 
-            type="submit" 
-            className="w-full mt-2 bg-secondary hover:bg-emerald-600 text-white font-medium py-3 rounded-lg transition-colors shadow-lg shadow-secondary/30"
-          >
+          <button type="submit" className="button button--secondary">
             Create Account
           </button>
         </form>
-        
-        <div className="mt-6 text-center text-sm text-text-muted">
+
+        <div className="auth-footer">
           Already have an account?{' '}
-          <Link to="/login" className="text-secondary hover:text-emerald-700 font-medium transition-colors">
+          <Link to="/login" className="auth-footer-link">
             Sign in
           </Link>
         </div>

@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../api/axiosConfig';
 import toast from 'react-hot-toast';
-import { LogOut, Filter, Trash2, Edit2, CheckCircle, Shield } from 'lucide-react';
+import { LogOut, Trash2, CheckCircle, Shield, Filter } from 'lucide-react';
+import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const { user, logout } = useContext(AuthContext);
@@ -62,208 +63,196 @@ const AdminDashboard = () => {
     }
   };
 
-  const filteredComplaints = statusFilter === 'All' 
-    ? complaints 
-    : complaints.filter(c => c.status === statusFilter);
+  const filteredComplaints = statusFilter === 'All'
+    ? complaints
+    : complaints.filter((c) => c.status === statusFilter);
 
-  const getStatusColor = (status) => {
+  const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'Pending': return 'text-amber-500 bg-amber-50';
-      case 'Assigned': return 'text-purple-500 bg-purple-50';
-      case 'In Progress': return 'text-blue-500 bg-blue-50';
-      case 'Resolved': return 'text-emerald-500 bg-emerald-50';
-      case 'Closed': return 'text-gray-500 bg-gray-200 border border-gray-300';
-      default: return 'text-gray-500 bg-gray-50';
+      case 'Pending':
+        return 'status-badge status-badge--pending';
+      case 'Assigned':
+        return 'status-badge status-badge--assigned';
+      case 'In Progress':
+        return 'status-badge status-badge--in-progress';
+      case 'Resolved':
+        return 'status-badge status-badge--resolved';
+      case 'Closed':
+        return 'status-badge status-badge--closed';
+      default:
+        return 'status-badge status-badge--closed';
+    }
+  };
+
+  const getPriorityBadgeClass = (priority) => {
+    switch (priority) {
+      case 'High':
+        return 'priority-badge priority-badge--high';
+      case 'Medium':
+        return 'priority-badge priority-badge--medium';
+      case 'Low':
+        return 'priority-badge priority-badge--low';
+      default:
+        return 'priority-badge priority-badge--default';
     }
   };
 
   const stats = {
     total: complaints.length,
-    pending: complaints.filter(c => c.status === 'Pending').length,
-    assigned: complaints.filter(c => c.status === 'Assigned').length,
-    inProgress: complaints.filter(c => c.status === 'In Progress').length,
-    resolved: complaints.filter(c => c.status === 'Resolved').length,
-    closed: complaints.filter(c => c.status === 'Closed').length,
-  };
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'High': return 'text-red-500 bg-red-100';
-      case 'Medium': return 'text-orange-500 bg-orange-100';
-      case 'Low': return 'text-green-500 bg-green-100';
-      default: return 'text-gray-500 bg-gray-100';
-    }
+    pending: complaints.filter((c) => c.status === 'Pending').length,
+    assigned: complaints.filter((c) => c.status === 'Assigned').length,
+    inProgress: complaints.filter((c) => c.status === 'In Progress').length,
+    resolved: complaints.filter((c) => c.status === 'Resolved').length,
+    closed: complaints.filter((c) => c.status === 'Closed').length,
   };
 
   return (
-    <div className="min-h-screen flex bg-background">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white flex flex-col hidden md:flex">
-        <div className="p-6 border-b border-gray-800">
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <Shield className="text-primary text-secondary" size={24} />
-            Admin Panel
+    <div className="admin-page">
+      <aside className="admin-sidebar">
+        <div className="admin-sidebar__header">
+          <h1 className="admin-sidebar__title">
+            <Shield size={24} /> Admin Panel
           </h1>
         </div>
-        <div className="p-6 flex-1">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center">
-              <span className="font-bold text-lg">{user?.name?.charAt(0)}</span>
-            </div>
-            <div>
-              <p className="font-medium text-sm">Admin</p>
-              <p className="text-xs text-gray-400">Warden</p>
+        <div className="admin-sidebar__content">
+          <div className="admin-profile">
+            <div className="admin-profile__avatar">{user?.name?.charAt(0)}</div>
+            <div className="admin-profile__info">
+              <p className="admin-profile__role">Admin</p>
+              <p className="admin-profile__role">Warden</p>
             </div>
           </div>
-          <nav className="space-y-2">
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-800 text-white font-medium transition-colors">
-              <Filter size={20} />
-              Manage Complaints
+          <nav className="admin-nav">
+            <button className="admin-nav__button">
+              <Filter size={20} /> Manage Complaints
             </button>
           </nav>
         </div>
-        <div className="p-4 border-t border-gray-800">
-          <button 
-            onClick={logout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-gray-800 transition-colors"
-          >
-            <LogOut size={20} />
-            Logout
+        <div className="admin-sidebar__content">
+          <button className="admin-logout" onClick={logout}>
+            <LogOut size={20} /> Logout
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto w-full">
-        <header className="mb-8 flex justify-between items-center md:hidden">
-            <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2"><Shield size={20}/> Admin Panel</h1>
-            <button onClick={logout} className="p-2 text-red-500"><LogOut size={20}/></button>
-        </header>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
-            <p className="text-sm text-gray-500 font-medium">Total Tasks</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+      <main className="admin-main">
+        <div className="admin-header--mobile">
+          <h1 className="admin-sidebar__title">
+            <Shield size={20} /> Admin Panel
+          </h1>
+          <button className="admin-logout" onClick={logout}>
+            <LogOut size={20} />
+          </button>
+        </div>
+
+        <div className="admin-stats-grid">
+          <div className="admin-stat-card">
+            <p className="admin-stat-card__title">Total Tasks</p>
+            <p className="admin-stat-card__value">{stats.total}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
-            <p className="text-sm text-amber-500 font-medium">Pending</p>
-            <p className="text-2xl font-bold text-amber-600">{stats.pending}</p>
+          <div className="admin-stat-card admin-stat-card--pending">
+            <p className="admin-stat-card__title">Pending</p>
+            <p className="admin-stat-card__value">{stats.pending}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
-            <p className="text-sm text-purple-500 font-medium">Assigned</p>
-            <p className="text-2xl font-bold text-purple-600">{stats.assigned}</p>
+          <div className="admin-stat-card admin-stat-card--assigned">
+            <p className="admin-stat-card__title">Assigned</p>
+            <p className="admin-stat-card__value">{stats.assigned}</p>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
-            <p className="text-sm text-blue-500 font-medium">In Progress</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
+          <div className="admin-stat-card admin-stat-card--progress">
+            <p className="admin-stat-card__title">In Progress</p>
+            <p className="admin-stat-card__value">{stats.inProgress}</p>
           </div>
         </div>
-        
-        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+
+        <div className="admin-overview">
           <div>
-            <h2 className="text-3xl font-bold text-text-main">Complaints Overview</h2>
-            <p className="text-text-muted mt-1">Manage and update student issues</p>
+            <h2 className="dashboard-title">Complaints Overview</h2>
+            <p className="dashboard-subtitle">Manage and update student issues</p>
           </div>
-          
-          <div className="flex items-center gap-2 bg-white p-1 rounded-lg shadow-sm border border-gray-200 text-xs overflow-x-auto">
+          <div className="admin-filter-bar">
             {['All', 'Pending', 'Assigned', 'In Progress', 'Resolved', 'Closed'].map((status) => (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${statusFilter === status ? 'bg-gray-900 text-white flex-1' : 'text-text-muted hover:text-text-main hover:bg-gray-50 flex-1'}`}
-              >
+                className={`filter-pill ${statusFilter === status ? 'filter-pill--active' : ''}`}>
                 {status}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden text-sm">
+        <div className="admin-table-wrapper">
           {loading ? (
-            <div className="p-12 text-center text-text-muted">Loading data...</div>
+            <div className="text-muted">Loading data...</div>
           ) : filteredComplaints.length === 0 ? (
-            <div className="p-12 text-center text-text-muted flex flex-col items-center">
-              <CheckCircle size={48} className="text-gray-300 mb-4" />
-              <p>No complaints found matching this filter.</p>
+            <div className="text-muted" style={{ textAlign: 'center', padding: '3rem 0' }}>
+              <CheckCircle size={48} style={{ color: '#94a3b8', marginBottom: '1rem' }} />
+              <div>No complaints found matching this filter.</div>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[800px]">
-                <thead>
-                  <tr className="bg-gray-50 text-text-muted border-b border-gray-200 uppercase tracking-wider text-xs font-semibold">
-                    <th className="px-6 py-4">Student Info</th>
-                    <th className="px-6 py-4">Issue Details</th>
-                    <th className="px-6 py-4 text-center">Category</th>
-                    <th className="px-6 py-4 text-center">Priority</th>
-                    <th className="px-6 py-4">Assigned To</th>
-                    <th className="px-6 py-4 text-center">Status</th>
-                    <th className="px-6 py-4">Actions</th>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Student Info</th>
+                  <th>Issue Details</th>
+                  <th>Category</th>
+                  <th>Priority</th>
+                  <th>Assigned To</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredComplaints.map((c) => (
+                  <tr key={c._id}>
+                    <td>
+                      <div className="table-label">{c.createdBy?.name || 'Unknown'}</div>
+                      <div className="table-meta">{c.createdBy?.hostel || 'N/A'} - Room {c.createdBy?.roomNumber || 'N/A'}</div>
+                    </td>
+                    <td>
+                      <div className="table-label" title={c.title}>{c.title}</div>
+                      <div className="table-meta" title={c.description}>{c.description}</div>
+                      <div className="table-meta">{new Date(c.createdAt).toLocaleDateString()}</div>
+                    </td>
+                    <td>
+                      <div className="badge">{c.category || 'Other'}</div>
+                    </td>
+                    <td>
+                      <div className={getPriorityBadgeClass(c.priority)}>{c.priority}</div>
+                    </td>
+                    <td>
+                      <select
+                        className="admin-select"
+                        value={c.assignedTo?._id || ''}
+                        onChange={(e) => handleAssignEmployee(c._id, e.target.value)}
+                        disabled={c.status === 'Resolved'}>
+                        <option value="" disabled>Unassigned</option>
+                        {employees.map((emp) => (
+                          <option key={emp._id} value={emp._id}>{emp.name} ({emp.department || 'Other'})</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <select
+                        className="admin-select"
+                        value={c.status}
+                        onChange={(e) => handleStatusChange(c._id, e.target.value)}>
+                        <option value="Pending">Pending</option>
+                        <option value="Assigned">Assigned</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Closed">Closed</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button className="admin-action-button" onClick={() => handleDelete(c._id)}>
+                        <Trash2 size={18} /> Delete
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {filteredComplaints.map(c => (
-                    <tr key={c._id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="font-semibold text-text-main">{c.createdBy?.name || 'Unknown'}</div>
-                        <div className="text-xs text-text-muted mt-1">
-                          {c.createdBy?.hostel || 'N/A'} - Room {c.createdBy?.roomNumber || 'N/A'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 max-w-xs">
-                        <div className="font-medium text-text-main truncate" title={c.title}>{c.title}</div>
-                        <div className="text-xs text-text-muted mt-1 max-w-[200px] truncate" title={c.description}>{c.description}</div>
-                        <div className="text-[10px] text-gray-400 mt-1">{new Date(c.createdAt).toLocaleDateString()}</div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
-                          {c.category || 'Other'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(c.priority)}`}>
-                          {c.priority}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm max-w-[150px]">
-                        <select
-                          className="w-full bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded focus:ring-primary focus:border-primary px-2 py-1 cursor-pointer"
-                          value={c.assignedTo?._id || ''}
-                          onChange={(e) => handleAssignEmployee(c._id, e.target.value)}
-                          disabled={c.status === 'Resolved'}
-                        >
-                          <option value="" disabled>Unassigned</option>
-                          {employees.map(emp => (
-                            <option key={emp._id} value={emp._id}>{emp.name} ({emp.department || 'Other'})</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <select
-                          className={`appearance-none bg-transparent font-medium text-center focus:outline-none focus:ring-2 focus:ring-gray-200 rounded px-2 py-1 cursor-pointer ${getStatusColor(c.status)}`}
-                          value={c.status}
-                          onChange={(e) => handleStatusChange(c._id, e.target.value)}
-                        >
-                          <option className="text-gray-800" value="Pending">Pending</option>
-                          <option className="text-gray-800" value="Assigned">Assigned</option>
-                          <option className="text-gray-800" value="In Progress">In Progress</option>
-                          <option className="text-gray-800" value="Resolved">Resolved</option>
-                          <option className="text-gray-800" value="Closed">Closed</option>
-                        </select>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button 
-                          onClick={() => handleDelete(c._id)}
-                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete Complaint"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
       </main>
