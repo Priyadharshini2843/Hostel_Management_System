@@ -43,9 +43,8 @@ const createComplaint = async (req, res) => {
         return res.status(400).json({ message: fileValidation.error });
       }
 
-      // Get the base URL for image access
-      // Adjust this based on your actual server setup
-      const baseUrl = `${req.protocol}://${req.get('host')}/uploads/complaints`;
+      const publicUrl = process.env.PUBLIC_URL || `${req.protocol}://${req.get('host')}`;
+      const baseUrl = `${publicUrl.replace(/\/$/, '')}/uploads/complaints`;
 
       // Create image metadata for each uploaded file
       images = req.files.map(file => ({

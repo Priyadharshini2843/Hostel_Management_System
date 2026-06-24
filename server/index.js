@@ -15,6 +15,9 @@ connectDB().then(async () => {
 });
 
 const app = express();
+const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
+
+app.set('trust proxy', 1);
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -29,7 +32,20 @@ if (!fs.existsSync(complaintsDir)) {
 }
 
 // Middleware
-app.use(cors());
+const allowedOrigins = (process.env.CLIENT_URL || process.env.ALLOWED_ORIGINS || 'https://hostel-management-system-1-o1zq.onrender.com')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // Serve static files for uploaded images
@@ -42,9 +58,21 @@ const complaintRoutes = require('./routes/complaintRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
 
-app.get('/', (req, res) => {
-  res.send('API is running...');
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok' });
 });
+
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+
+  app.get(/^\/(?!api\/?).*/, (req, res) => {
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
+}
 
 const PORT = process.env.PORT || 5000;
 
