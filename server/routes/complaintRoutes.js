@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const { getComplaints, createComplaint, updateComplaintStatus, deleteComplaint, assignComplaint, addFeedback } = require('../controllers/complaintController');
 const { protect, admin, employee } = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware');
 
 router.route('/')
   .get(protect, getComplaints)
-  .post(protect, createComplaint);
+  .post(protect, upload.array('images', 3), createComplaint);
 
 router.route('/:id')
   .delete(protect, admin, deleteComplaint);

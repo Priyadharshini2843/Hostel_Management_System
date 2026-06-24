@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../api/axiosConfig';
 import toast from 'react-hot-toast';
 import { LogOut, CheckCircle, Wrench, Clock, FileText } from 'lucide-react';
+import ImageGallery from '../components/ImageGallery';
 import './EmployeeDashboard.css';
 
 const EmployeeDashboard = () => {
@@ -103,12 +104,12 @@ const EmployeeDashboard = () => {
             <p className="employee-profile-card__meta">Maintenance Staff</p>
           </div>
           <nav className="employee-nav">
-            <button className="employee-nav__button">
+            <button className="employee-nav__button employee-nav__button--active">
               <FileText size={20} /> Assigned Tasks
             </button>
           </nav>
         </div>
-        <div className="employee-sidebar__content">
+        <div className="employee-sidebar__footer">
           <button className="employee-logout" onClick={logout}>
             <LogOut size={20} /> Logout
           </button>
@@ -192,41 +193,50 @@ const EmployeeDashboard = () => {
               </thead>
               <tbody>
                 {complaints.map((c) => (
-                  <tr key={c._id}>
-                    <td>
-                      <div className="table-label">{c.title}</div>
-                      <div className="table-meta" title={c.description}>{c.description}</div>
-                      <div className="table-meta">Assigned on: {c.assignedDate ? new Date(c.assignedDate).toLocaleDateString() : 'N/A'}</div>
-                    </td>
-                    <td>
-                      <div className="table-label">{c.createdBy?.hostel || 'N/A'}</div>
-                      <div className="table-meta">Room {c.createdBy?.roomNumber || 'N/A'}</div>
-                      <div className="table-meta">By {c.createdBy?.name || 'Unknown'}</div>
-                    </td>
-                    <td>
-                      <span className="badge">{c.category || 'Other'}</span>
-                    </td>
-                    <td>
-                      <span className={getPriorityBadgeClass(c.priority)}>{c.priority}</span>
-                    </td>
-                    <td>
-                      <span className={getStatusBadgeClass(c.status)}>{c.status}</span>
-                    </td>
-                    <td>
-                      <div className="table-meta" title={c.repairNotes || 'No notes added yet'}>{c.repairNotes || 'No notes added yet'}</div>
-                    </td>
-                    <td>
-                      {c.status !== 'Resolved' && c.status !== 'Closed' ? (
-                        <button className="employee-action-button" onClick={() => openEditModal(c)}>
-                          Update
-                        </button>
-                      ) : (
-                        <span className={c.status === 'Closed' ? 'employee-status-badge employee-status-badge--closed' : 'employee-status-badge employee-status-badge--resolved'}>
-                          {c.status}
-                        </span>
-                      )}
-                    </td>
-                  </tr>
+                  <React.Fragment key={c._id}>
+                    <tr>
+                      <td>
+                        <div className="table-label">{c.title}</div>
+                        <div className="table-meta" title={c.description}>{c.description}</div>
+                        <div className="table-meta">Assigned on: {c.assignedDate ? new Date(c.assignedDate).toLocaleDateString() : 'N/A'}</div>
+                      </td>
+                      <td>
+                        <div className="table-label">{c.createdBy?.hostel || 'N/A'}</div>
+                        <div className="table-meta">Room {c.createdBy?.roomNumber || 'N/A'}</div>
+                        <div className="table-meta">By {c.createdBy?.name || 'Unknown'}</div>
+                      </td>
+                      <td>
+                        <span className="badge">{c.category || 'Other'}</span>
+                      </td>
+                      <td>
+                        <span className={getPriorityBadgeClass(c.priority)}>{c.priority}</span>
+                      </td>
+                      <td>
+                        <span className={getStatusBadgeClass(c.status)}>{c.status}</span>
+                      </td>
+                      <td>
+                        <div className="table-meta" title={c.repairNotes || 'No notes added yet'}>{c.repairNotes || 'No notes added yet'}</div>
+                      </td>
+                      <td>
+                        {c.status !== 'Resolved' && c.status !== 'Closed' ? (
+                          <button className="employee-action-button" onClick={() => openEditModal(c)}>
+                            Update
+                          </button>
+                        ) : (
+                          <span className={c.status === 'Closed' ? 'employee-status-badge employee-status-badge--closed' : 'employee-status-badge employee-status-badge--resolved'}>
+                            {c.status}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                    {c.images && c.images.length > 0 && (
+                      <tr key={`${c._id}-images`}>
+                        <td colSpan="7">
+                          <ImageGallery images={c.images} />
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>

@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    enum: ['Electrical', 'Plumbing', 'Furniture', 'Other'],
+    enum: ['Electrical', 'Plumbing', 'Furniture', 'Maintenance', 'Other'],
   },
   hostel: {
     type: String,

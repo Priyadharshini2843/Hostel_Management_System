@@ -29,7 +29,8 @@ const seedDatabase = async () => {
       { name: 'John', email: 'john@hostel.com', password: 'password123', role: 'employee', department: 'Electrical' },
       { name: 'Ravi', email: 'ravi@hostel.com', password: 'password123', role: 'employee', department: 'Plumbing' },
       { name: 'Kumar', email: 'kumar@hostel.com', password: 'password123', role: 'employee', department: 'Furniture' },
-      { name: 'Suresh', email: 'suresh@hostel.com', password: 'password123', role: 'employee', department: 'Electrical' }
+      { name: 'Suresh', email: 'suresh@hostel.com', password: 'password123', role: 'employee', department: 'Electrical' },
+      { name: 'Nirmal', email: 'nirmal@hostel.com', password: 'password123', role: 'employee', department: 'Maintenance' }
     ];
 
     for (const emp of employeesToSeed) {

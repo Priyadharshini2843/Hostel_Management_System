@@ -54,6 +54,23 @@ const complaintSchema = new mongoose.Schema({
   feedback: {
     type: String,
   },
+  images: [
+    {
+      url: {
+        type: String,
+      },
+      filename: {
+        type: String,
+      },
+      originalName: {
+        type: String,
+      },
+      uploadedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt
 });

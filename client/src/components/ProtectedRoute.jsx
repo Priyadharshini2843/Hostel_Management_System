@@ -18,11 +18,11 @@ const ProtectedRoute = ({ children, adminOnly = false, employeeOnly = false }) =
   }
 
   if (adminOnly && user.role !== 'admin') {
-    return <Navigate to={user.role === 'employee' ? '/employee' : '/dashboard'} replace />;
+    return <Navigate to={user.role === 'employee' ? '/employee' : '/student'} replace />;
   }
 
   if (employeeOnly && user.role !== 'employee') {
-    return <Navigate to={user.role === 'admin' ? '/admin' : '/dashboard'} replace />;
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/student'} replace />;
   }
 
   return children;

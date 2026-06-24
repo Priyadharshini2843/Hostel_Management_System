@@ -1,115 +1,10 @@
+@import "../styles/Sidebar.css";
+
 .employee-page {
   min-height: 100vh;
   display: flex;
   background: var(--background);
   position: relative;
-}
-
-.employee-sidebar {
-  width: 20rem;
-  background: #0f172a;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid #1e293b;
-}
-
-.employee-sidebar__header {
-  padding: 1.5rem;
-}
-
-.employee-sidebar__title {
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #60a5fa;
-}
-
-.employee-sidebar__content {
-  padding: 1.5rem;
-  flex: 1;
-}
-
-.employee-profile-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.5rem;
-  background: #111827;
-  border: 1px solid #334155;
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-}
-
-.employee-profile-card__avatar {
-  width: 4rem;
-  height: 4rem;
-  display: grid;
-  place-items: center;
-  border-radius: 9999px;
-  background: rgba(59, 130, 246, 0.16);
-  color: #60a5fa;
-}
-
-.employee-profile-card__name,
-.employee-profile-card__meta {
-  margin: 0;
-}
-
-.employee-profile-card__name {
-  font-weight: 700;
-  color: white;
-}
-
-.employee-profile-card__meta {
-  color: #94a3b8;
-  font-size: 0.95rem;
-}
-
-.employee-nav {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.employee-nav__button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 1rem;
-  border-radius: 1rem;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  background: rgba(59, 130, 246, 0.1);
-  color: #60a5fa;
-}
-
-.employee-nav__button:hover {
-  background: rgba(59, 130, 246, 0.16);
-}
-
-.employee-logout {
-  width: 100%;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(248, 113, 113, 0.25);
-  background: rgba(254, 226, 226, 0.6);
-  color: #f87171;
-  font-weight: 600;
-}
-
-.employee-logout:hover {
-  background: rgba(248, 113, 113, 0.12);
 }
 
 .employee-main {
@@ -197,6 +92,10 @@
 .employee-table td {
   padding: 1rem 1.25rem;
   vertical-align: top;
+}
+
+.employee-table th {
+  text-align: left;
 }
 
 .employee-table thead tr {
@@ -379,8 +278,3 @@
   }
 }
 
-@media (max-width: 1023px) {
-  .employee-sidebar {
-    display: none;
-  }
-}

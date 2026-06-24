@@ -1,102 +1,9 @@
+@import "../styles/Sidebar.css";
+
 .admin-page {
   min-height: 100vh;
   display: flex;
   background: var(--background);
-}
-
-.admin-sidebar {
-  width: 20rem;
-  background: #0f172a;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid #1e293b;
-}
-
-.admin-sidebar__header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #1e293b;
-}
-
-.admin-sidebar__title {
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: white;
-}
-
-.admin-sidebar__content {
-  padding: 1.5rem;
-  flex: 1;
-}
-
-.admin-profile {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-.admin-profile__avatar {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 9999px;
-  display: grid;
-  place-items: center;
-  background: #111827;
-  color: white;
-  font-weight: 700;
-}
-
-.admin-profile__info {
-  color: white;
-}
-
-.admin-profile__role {
-  margin: 0.25rem 0 0;
-  font-size: 0.85rem;
-  color: #94a3b8;
-}
-
-.admin-nav {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.admin-nav__button,
-.admin-logout {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 1rem;
-  border-radius: 1rem;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.admin-nav__button {
-  background: rgba(255, 255, 255, 0.06);
-  color: white;
-}
-
-.admin-nav__button:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.admin-logout {
-  background: transparent;
-  color: #f87171;
-  border: 1px solid rgba(248, 113, 113, 0.25);
-}
-
-.admin-logout:hover {
-  background: rgba(248, 113, 113, 0.12);
 }
 
 .admin-main {
@@ -215,6 +122,10 @@
   vertical-align: top;
 }
 
+.admin-table th {
+  text-align: left;
+}
+
 .admin-table thead tr {
   background: #f8fafc;
   color: var(--text-muted);
@@ -283,8 +194,3 @@
   }
 }
 
-@media (max-width: 1023px) {
-  .admin-sidebar {
-    display: none;
-  }
-}

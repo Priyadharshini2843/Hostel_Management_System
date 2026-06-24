@@ -22,7 +22,7 @@ const Register = () => {
     if (user) {
       if (user.role === 'admin') navigate('/admin');
       else if (user.role === 'employee') navigate('/employee');
-      else navigate('/dashboard');
+      else navigate('/student');
     }
   }, [user, navigate]);
 

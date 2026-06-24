@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../api/axiosConfig';
 import toast from 'react-hot-toast';
 import { LogOut, Trash2, CheckCircle, Shield, Filter } from 'lucide-react';
+import ImageGallery from '../components/ImageGallery';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -123,12 +124,12 @@ const AdminDashboard = () => {
             </div>
           </div>
           <nav className="admin-nav">
-            <button className="admin-nav__button">
+            <button className="admin-nav__button admin-nav__button--active">
               <Filter size={20} /> Manage Complaints
             </button>
           </nav>
         </div>
-        <div className="admin-sidebar__content">
+        <div className="admin-sidebar__footer">
           <button className="admin-logout" onClick={logout}>
             <LogOut size={20} /> Logout
           </button>
@@ -204,52 +205,61 @@ const AdminDashboard = () => {
               </thead>
               <tbody>
                 {filteredComplaints.map((c) => (
-                  <tr key={c._id}>
-                    <td>
-                      <div className="table-label">{c.createdBy?.name || 'Unknown'}</div>
-                      <div className="table-meta">{c.createdBy?.hostel || 'N/A'} - Room {c.createdBy?.roomNumber || 'N/A'}</div>
-                    </td>
-                    <td>
-                      <div className="table-label" title={c.title}>{c.title}</div>
-                      <div className="table-meta" title={c.description}>{c.description}</div>
-                      <div className="table-meta">{new Date(c.createdAt).toLocaleDateString()}</div>
-                    </td>
-                    <td>
-                      <div className="badge">{c.category || 'Other'}</div>
-                    </td>
-                    <td>
-                      <div className={getPriorityBadgeClass(c.priority)}>{c.priority}</div>
-                    </td>
-                    <td>
-                      <select
-                        className="admin-select"
-                        value={c.assignedTo?._id || ''}
-                        onChange={(e) => handleAssignEmployee(c._id, e.target.value)}
-                        disabled={c.status === 'Resolved'}>
-                        <option value="" disabled>Unassigned</option>
-                        {employees.map((emp) => (
-                          <option key={emp._id} value={emp._id}>{emp.name} ({emp.department || 'Other'})</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <select
-                        className="admin-select"
-                        value={c.status}
-                        onChange={(e) => handleStatusChange(c._id, e.target.value)}>
-                        <option value="Pending">Pending</option>
-                        <option value="Assigned">Assigned</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Resolved">Resolved</option>
-                        <option value="Closed">Closed</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button className="admin-action-button" onClick={() => handleDelete(c._id)}>
-                        <Trash2 size={18} /> Delete
-                      </button>
-                    </td>
-                  </tr>
+                  <React.Fragment key={c._id}>
+                    <tr>
+                      <td>
+                        <div className="table-label">{c.createdBy?.name || 'Unknown'}</div>
+                        <div className="table-meta">{c.createdBy?.hostel || 'N/A'} - Room {c.createdBy?.roomNumber || 'N/A'}</div>
+                      </td>
+                      <td>
+                        <div className="table-label" title={c.title}>{c.title}</div>
+                        <div className="table-meta" title={c.description}>{c.description}</div>
+                        <div className="table-meta">{new Date(c.createdAt).toLocaleDateString()}</div>
+                      </td>
+                      <td>
+                        <div className="badge">{c.category || 'Other'}</div>
+                      </td>
+                      <td>
+                        <div className={getPriorityBadgeClass(c.priority)}>{c.priority}</div>
+                      </td>
+                      <td>
+                        <select
+                          className="admin-select"
+                          value={c.assignedTo?._id || ''}
+                          onChange={(e) => handleAssignEmployee(c._id, e.target.value)}
+                          disabled={c.status === 'Resolved'}>
+                          <option value="" disabled>Unassigned</option>
+                          {employees.map((emp) => (
+                            <option key={emp._id} value={emp._id}>{emp.name} ({emp.department || 'Other'})</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          className="admin-select"
+                          value={c.status}
+                          onChange={(e) => handleStatusChange(c._id, e.target.value)}>
+                          <option value="Pending">Pending</option>
+                          <option value="Assigned">Assigned</option>
+                          <option value="In Progress">In Progress</option>
+                          <option value="Resolved">Resolved</option>
+                          <option value="Closed">Closed</option>
+                        </select>
+                      </td>
+                      <td>
+                        <button className="admin-action-button" onClick={() => handleDelete(c._id)}>
+                          <Trash2 size={18} /> Delete
+                        </button>
+                      </td>
+                    </tr>
+                    {c.images && c.images.length > 0 && (
+                      <tr key={`${c._id}-images`}>
+                        <td colSpan="7">
+                          <ImageGallery images={c.images} />
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>

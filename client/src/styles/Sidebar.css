@@ -1,0 +1,222 @@
+:root {
+  --sidebar-bg: #0f172a;
+  --sidebar-bg-elevated: #111827;
+  --sidebar-border: #1e293b;
+  --sidebar-border-strong: #334155;
+  --sidebar-text: #ffffff;
+  --sidebar-text-muted: #94a3b8;
+  --sidebar-icon: #ffffff;
+  --sidebar-nav-bg: rgba(255, 255, 255, 0.06);
+  --sidebar-nav-hover-bg: rgba(255, 255, 255, 0.12);
+  --sidebar-nav-active-bg: rgba(255, 255, 255, 0.12);
+  --sidebar-logout: #f87171;
+  --sidebar-logout-border: rgba(248, 113, 113, 0.25);
+  --sidebar-logout-hover-bg: rgba(248, 113, 113, 0.12);
+}
+
+.admin-sidebar,
+.employee-sidebar,
+.dashboard-sidebar {
+  width: 20rem;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: 10px 0 30px rgba(15, 23, 42, 0.12);
+}
+
+.admin-sidebar__header,
+.employee-sidebar__header,
+.dashboard-sidebar__header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.admin-sidebar__title,
+.employee-sidebar__title,
+.dashboard-sidebar__title {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--sidebar-text);
+}
+
+.admin-sidebar__title svg,
+.employee-sidebar__title svg,
+.dashboard-sidebar__title svg,
+.admin-nav__button svg,
+.employee-nav__button svg,
+.dashboard-nav__button svg {
+  color: currentColor;
+  flex-shrink: 0;
+}
+
+.admin-sidebar__content,
+.employee-sidebar__content,
+.dashboard-sidebar__content {
+  padding: 1.5rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.admin-sidebar__footer,
+.employee-sidebar__footer,
+.dashboard-sidebar__footer {
+  padding: 1.5rem;
+  margin-top: auto;
+}
+
+.admin-profile,
+.employee-profile-card,
+.profile-card {
+  margin-bottom: 1.5rem;
+  background: var(--sidebar-bg-elevated);
+  border: 1px solid var(--sidebar-border-strong);
+}
+
+.employee-profile-card,
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+}
+
+.admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 1.25rem;
+  padding: 1rem;
+}
+
+.admin-profile__avatar,
+.employee-profile-card__avatar,
+.profile-card__avatar {
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--sidebar-icon);
+}
+
+.admin-profile__avatar {
+  width: 3rem;
+  height: 3rem;
+  font-weight: 700;
+}
+
+.employee-profile-card__avatar,
+.profile-card__avatar {
+  width: 4rem;
+  height: 4rem;
+}
+
+.admin-profile__info,
+.admin-profile__role,
+.employee-profile-card__name,
+.employee-profile-card__meta,
+.profile-card__name,
+.profile-card__meta {
+  margin: 0;
+}
+
+.admin-profile__info,
+.employee-profile-card__name,
+.profile-card__name {
+  color: var(--sidebar-text);
+}
+
+.employee-profile-card__name,
+.profile-card__name {
+  font-weight: 700;
+}
+
+.admin-profile__role,
+.employee-profile-card__meta,
+.profile-card__meta {
+  color: var(--sidebar-text-muted);
+  font-size: 0.95rem;
+}
+
+.admin-profile__role + .admin-profile__role {
+  margin-top: 0.25rem;
+}
+
+.admin-nav,
+.employee-nav,
+.dashboard-nav {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-nav__button,
+.employee-nav__button,
+.dashboard-nav__button,
+.admin-logout,
+.employee-logout,
+.dashboard-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+}
+
+.admin-nav__button,
+.employee-nav__button,
+.dashboard-nav__button {
+  border: none;
+  background: var(--sidebar-nav-bg);
+  color: var(--sidebar-text);
+}
+
+.admin-nav__button:hover,
+.employee-nav__button:hover,
+.dashboard-nav__button:hover {
+  background: var(--sidebar-nav-hover-bg);
+}
+
+.admin-nav__button--active,
+.employee-nav__button--active,
+.dashboard-nav__button--active {
+  background: var(--sidebar-nav-active-bg);
+  color: var(--sidebar-text);
+}
+
+.admin-logout,
+.employee-logout,
+.dashboard-logout {
+  border: 1px solid var(--sidebar-logout-border);
+  background: transparent;
+  color: var(--sidebar-logout);
+}
+
+.admin-logout:hover,
+.employee-logout:hover,
+.dashboard-logout:hover {
+  background: var(--sidebar-logout-hover-bg);
+}
+
+@media (max-width: 1023px) {
+  .admin-sidebar,
+  .employee-sidebar,
+  .dashboard-sidebar {
+    display: none;
+  }
+}

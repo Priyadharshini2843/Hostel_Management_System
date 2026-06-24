@@ -1,5 +1,6 @@
 const Complaint = require('../models/Complaint');
 const { sendComplaintResolvedEmail } = require('../utils/emailService');
+const { validateFiles, createImageMetadata } = require('../utils/fileValidator');
 
 // @desc    Get all complaints (Admin) or User's complaints (Student)
 // @route   GET /api/complaints
@@ -34,12 +35,34 @@ const createComplaint = async (req, res) => {
   const { title, description, priority, category } = req.body;
 
   try {
+    // Validate uploaded files if any
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      const fileValidation = validateFiles(req.files);
+      if (!fileValidation.isValid) {
+        return res.status(400).json({ message: fileValidation.error });
+      }
+
+      // Get the base URL for image access
+      // Adjust this based on your actual server setup
+      const baseUrl = `${req.protocol}://${req.get('host')}/uploads/complaints`;
+
+      // Create image metadata for each uploaded file
+      images = req.files.map(file => ({
+        url: `${baseUrl}/${file.filename}`,
+        filename: file.filename,
+        originalName: file.originalname,
+        uploadedAt: new Date()
+      }));
+    }
+
     const complaint = new Complaint({
       title,
       description,
       priority: priority || 'Low',
       category: category || 'Other',
       createdBy: req.user._id,
+      images: images // Add images to complaint
     });
 
     const createdComplaint = await complaint.save();
@@ -68,20 +91,24 @@ const updateComplaintStatus = async (req, res) => {
         complaint.completionTime = Date.now();
       }
       const updatedComplaint = await complaint.save();
+      let emailNotification = { sent: false, reason: 'Status is not Resolved' };
       if (status === 'Resolved' && !wasResolved) {
         const complaintWithStudent = await updatedComplaint.populate('createdBy', 'name email');
         try {
-          const emailResult = await sendComplaintResolvedEmail(complaintWithStudent);
-          if (emailResult.sent) {
+          emailNotification = await sendComplaintResolvedEmail(complaintWithStudent);
+          if (emailNotification.sent) {
             console.log(`Resolution email sent to ${complaintWithStudent.createdBy.email}`);
           } else {
-            console.warn(`Resolution email not sent: ${emailResult.reason}`);
+            console.warn(`Resolution email not sent: ${emailNotification.reason}`);
           }
         } catch (emailError) {
+          emailNotification = { sent: false, reason: emailError.message };
           console.error(`Failed to send resolution email: ${emailError.message}`);
         }
+      } else if (status === 'Resolved') {
+        emailNotification = { sent: false, reason: 'Complaint was already resolved' };
       }
-      res.json(updatedComplaint);
+      res.json({ ...updatedComplaint.toObject(), emailNotification });
     } else {
       res.status(404).json({ message: 'Complaint not found' });
     }

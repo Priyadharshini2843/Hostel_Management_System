@@ -3,12 +3,13 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../api/axiosConfig';
 import toast from 'react-hot-toast';
 import { LogOut, User as UserIcon, AlertCircle, CheckCircle } from 'lucide-react';
+import StudentSidebar from '../components/StudentSidebar';
+import ImageGallery from '../components/ImageGallery';
 import './StudentDashboard.css';
 
 const StudentDashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const [complaints, setComplaints] = useState([]);
-  const [formData, setFormData] = useState({ title: '', description: '', priority: 'Low', category: 'Other' });
   const [loading, setLoading] = useState(true);
   const [feedbackData, setFeedbackData] = useState({ rating: 5, feedback: '' });
   const [feedbackComplaintId, setFeedbackComplaintId] = useState(null);
@@ -27,18 +28,6 @@ const StudentDashboard = () => {
   useEffect(() => {
     fetchComplaints();
   }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post('/complaints', formData);
-      toast.success('Complaint submitted successfully');
-      setFormData({ title: '', description: '', priority: 'Low', category: 'Other' });
-      fetchComplaints();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to submit complaint');
-    }
-  };
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
@@ -83,34 +72,16 @@ const StudentDashboard = () => {
     }
   };
 
+  const stats = {
+    total: complaints.length,
+    pending: complaints.filter((c) => c.status === 'Pending').length,
+    assigned: complaints.filter((c) => c.status === 'Assigned').length,
+    resolved: complaints.filter((c) => c.status === 'Resolved').length,
+  };
+
   return (
     <div className="dashboard-page">
-      <aside className="dashboard-sidebar">
-        <div className="dashboard-sidebar__header">
-          <h1 className="dashboard-sidebar__title">Hostel System</h1>
-        </div>
-        <div className="dashboard-sidebar__content">
-          <div className="profile-card">
-            <div className="profile-card__avatar">
-              <UserIcon size={24} />
-            </div>
-            <h3 className="profile-card__name">{user?.name}</h3>
-            <p className="profile-card__meta">{user?.hostel} - Room {user?.roomNumber}</p>
-          </div>
-          <nav className="dashboard-nav">
-            <button className="dashboard-nav__button">
-              <AlertCircle size={20} />
-              My Complaints
-            </button>
-          </nav>
-        </div>
-        <div className="dashboard-sidebar__content">
-          <button className="dashboard-logout" onClick={logout}>
-            <LogOut size={20} />
-            Logout
-          </button>
-        </div>
-      </aside>
+      <StudentSidebar />
 
       <main className="dashboard-main">
         <div className="dashboard-header--mobile">
@@ -133,64 +104,22 @@ const StudentDashboard = () => {
         </div>
 
         <div className="dashboard-grid">
-          <section className="dashboard-panel dashboard-panel--form">
-            <div className="dashboard-panel__header">
-              <h3>File a Complaint</h3>
+          <section className="dashboard-stats-grid">
+            <div className="dashboard-stat-card">
+              <p className="dashboard-stat-card__title">Total Complaints</p>
+              <p className="dashboard-stat-card__value">{stats.total}</p>
             </div>
-            <div className="dashboard-panel__content">
-              <form onSubmit={handleSubmit} className="dashboard-form">
-                <div className="form-group">
-                  <label className="form-label">Issue Title</label>
-                  <input
-                    type="text"
-                    required
-                    className="form-control"
-                    placeholder="E.g., Fan not working"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Description</label>
-                  <textarea
-                    required
-                    className="form-textarea"
-                    placeholder="Describe the issue in detail..."
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  />
-                </div>
-                <div className="dashboard-field-grid">
-                  <div className="form-group">
-                    <label className="form-label">Category</label>
-                    <select
-                      className="form-select"
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    >
-                      <option value="Electrical">Electrical</option>
-                      <option value="Plumbing">Plumbing</option>
-                      <option value="Furniture">Furniture</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Priority</label>
-                    <select
-                      className="form-select"
-                      value={formData.priority}
-                      onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                    >
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                    </select>
-                  </div>
-                </div>
-                <button type="submit" className="button button--primary">
-                  Submit Complaint
-                </button>
-              </form>
+            <div className="dashboard-stat-card">
+              <p className="dashboard-stat-card__title">Pending</p>
+              <p className="dashboard-stat-card__value">{stats.pending}</p>
+            </div>
+            <div className="dashboard-stat-card">
+              <p className="dashboard-stat-card__title">Assigned</p>
+              <p className="dashboard-stat-card__value">{stats.assigned}</p>
+            </div>
+            <div className="dashboard-stat-card">
+              <p className="dashboard-stat-card__title">Resolved</p>
+              <p className="dashboard-stat-card__value">{stats.resolved}</p>
             </div>
           </section>
 
@@ -220,47 +149,56 @@ const StudentDashboard = () => {
                     </thead>
                     <tbody>
                       {complaints.map((c) => (
-                        <tr key={c._id}>
-                          <td>
-                            <div className="table-label">{c.title}</div>
-                            <div className="table-meta">{c.description}</div>
-                            <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              <span className="badge">{c.category || 'Other'}</span>
-                              <span className={getPriorityBadgeClass(c.priority)}>{c.priority} Priority</span>
-                            </div>
-                          </td>
-                          <td>
-                            {c.assignedTo?.name ? (
-                              <div className="table-label">{c.assignedTo.name}</div>
-                            ) : (
-                              <span className="text-muted" style={{ fontStyle: 'italic' }}>Unassigned</span>
-                            )}
-                          </td>
-                          <td>
-                            <span className={getStatusBadgeClass(c.status)}>{c.status}</span>
-                            {c.repairNotes && (
-                              <div className="table-meta" style={{ marginTop: '0.5rem' }} title={c.repairNotes}>
-                                Notes: {c.repairNotes}
+                        <React.Fragment key={c._id}>
+                          <tr>
+                            <td>
+                              <div className="table-label">{c.title}</div>
+                              <div className="table-meta">{c.description}</div>
+                              <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                <span className="badge">{c.category || 'Other'}</span>
+                                <span className={getPriorityBadgeClass(c.priority)}>{c.priority} Priority</span>
                               </div>
-                            )}
-                          </td>
-                          <td>
-                            <div className="table-meta">{new Date(c.createdAt).toLocaleDateString()}</div>
-                          </td>
-                          <td style={{ textAlign: 'center' }}>
-                            {c.status === 'Resolved' && !c.rating ? (
-                              <button type="button" onClick={() => setFeedbackComplaintId(c._id)} className="button button--ghost">
-                                Rate
-                              </button>
-                            ) : c.rating ? (
-                              <span style={{ color: '#f59e0b', fontSize: '0.9rem' }}>
-                                {'★'.repeat(c.rating)}{'☆'.repeat(5 - c.rating)}
-                              </span>
-                            ) : (
-                              <span className="text-muted">-</span>
-                            )}
-                          </td>
-                        </tr>
+                            </td>
+                            <td>
+                              {c.assignedTo?.name ? (
+                                <div className="table-label">{c.assignedTo.name}</div>
+                              ) : (
+                                <span className="text-muted" style={{ fontStyle: 'italic' }}>Unassigned</span>
+                              )}
+                            </td>
+                            <td>
+                              <span className={getStatusBadgeClass(c.status)}>{c.status}</span>
+                              {c.repairNotes && (
+                                <div className="table-meta" style={{ marginTop: '0.5rem' }} title={c.repairNotes}>
+                                  Notes: {c.repairNotes}
+                                </div>
+                              )}
+                            </td>
+                            <td>
+                              <div className="table-meta">{new Date(c.createdAt).toLocaleDateString()}</div>
+                            </td>
+                            <td style={{ textAlign: 'center' }}>
+                              {c.status === 'Resolved' && !c.rating ? (
+                                <button type="button" onClick={() => setFeedbackComplaintId(c._id)} className="button button--ghost">
+                                  Rate
+                                </button>
+                              ) : c.rating ? (
+                                <span style={{ color: '#f59e0b', fontSize: '0.9rem' }}>
+                                  {'★'.repeat(c.rating)}{'☆'.repeat(5 - c.rating)}
+                                </span>
+                              ) : (
+                                <span className="text-muted">-</span>
+                              )}
+                            </td>
+                          </tr>
+                          {c.images && c.images.length > 0 && (
+                            <tr key={`${c._id}-images`}>
+                              <td colSpan="5">
+                                <ImageGallery images={c.images} />
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
                       ))}
                     </tbody>
                   </table>

@@ -8,6 +8,7 @@ import './App.css';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import StudentDashboard from './pages/StudentDashboard';
+import NewComplaintPage from './pages/NewComplaintPage';
 import AdminDashboard from './pages/AdminDashboard';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 
@@ -21,11 +22,20 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
+            <Route path="/dashboard" element={<Navigate to="/student" replace />} />
             <Route
-              path="/dashboard"
+              path="/student"
               element={
                 <ProtectedRoute>
                   <StudentDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/new-complaint"
+              element={
+                <ProtectedRoute>
+                  <NewComplaintPage />
                 </ProtectedRoute>
               }
             />
